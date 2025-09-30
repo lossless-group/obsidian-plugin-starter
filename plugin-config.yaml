@@ -1,0 +1,43 @@
+# Plugin Configuration for Template Replacement
+# Update these values when creating a new plugin from this starter
+
+plugin:
+  # Plugin identifiers
+  id: "obsidian-plugin-starter"
+  name: "Obsidian Plugin Starter"
+  class_name: "StarterPlugin"
+  
+  # Plugin metadata
+  version: "0.0.1"
+  description: "This is starter code for Obsidian plugins (https://obsidian.md)"
+  author: "The Lossless Group"
+  author_url: "https://lossless.group"
+  funding_url: "https://lossless.group"
+  
+  # Plugin settings
+  min_app_version: "1.8.10"
+  is_desktop_only: true
+  
+  # Development settings
+  keywords:
+    - "Obsidian"
+    - "Plugin"
+    - "Starter"
+    - "Template"
+    
+# Example configuration for a new plugin:
+# Uncomment and modify these values, then run the setup script
+#
+# plugin:
+#   id: "my-awesome-plugin"
+#   name: "My Awesome Plugin"
+#   class_name: "MyAwesomePlugin"
+#   version: "1.0.0"
+#   description: "An awesome plugin that does amazing things"
+#   author: "Your Name"
+#   author_url: "https://your-website.com"
+#   funding_url: "https://your-funding-page.com"
+#   keywords:
+#     - "Obsidian"
+#     - "Plugin"
+#     - "Awesome"

@@ -1,0 +1,375 @@
+/* Modal Base Styles */
+.modal {
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 60vh;
+}
+
+.modal h2 {
+    margin-top: 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--background-modifier-border);
+    color: var(--text-normal);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Modal Section Styles */
+.modal-section {
+    margin-bottom: 2rem;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--background-primary);
+}
+
+.modal-section h3 {
+    margin: 0;
+    padding: 1rem;
+    background-color: var(--background-secondary);
+    color: var(--text-normal);
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.modal-section .setting-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--background-modifier-border-hover);
+    background-color: var(--background-primary);
+    transition: background-color 0.2s ease;
+}
+
+.modal-section .setting-item:last-child {
+    border-bottom: none;
+}
+
+.modal-section .setting-item:hover {
+    background-color: var(--background-primary-alt);
+}
+
+/* Current File Modal Specific Styles */
+.current-file-modal {
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.current-file-modal .modal-section {
+    margin-bottom: 1.5rem;
+}
+
+.current-file-modal .setting-item-name {
+    font-weight: 500;
+    color: var(--text-normal);
+    margin-bottom: 0.25rem;
+}
+
+.current-file-modal .setting-item-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.current-file-modal .setting-item-control {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+}
+
+.current-file-modal .setting-item-control input[type="text"] {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.5rem;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 0.9rem;
+}
+
+.current-file-modal .setting-item-control input[type="text"]:focus {
+    outline: none;
+    border-color: var(--interactive-accent);
+    box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+.current-file-modal .setting-item-control button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.current-file-modal .setting-item-control button:hover {
+    background-color: var(--interactive-accent-hover);
+    border-color: var(--interactive-accent-hover);
+    transform: translateY(-1px);
+}
+
+.current-file-modal .setting-item-control button:active {
+    transform: translateY(0);
+}
+
+/* Text Case Buttons Styling */
+.current-file-modal .text-case-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.current-file-modal .text-case-buttons button {
+    flex: 1;
+    min-width: 100px;
+}
+
+/* Batch Directory Modal Specific Styles */
+.batch-directory-modal {
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.batch-directory-modal .modal-section {
+    margin-bottom: 2rem;
+}
+
+.batch-directory-modal .directory-input {
+    background-color: var(--background-primary-alt);
+    border: 2px solid var(--interactive-accent);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.batch-directory-modal .directory-input input[type="text"] {
+    width: 100%;
+    font-family: var(--font-monospace);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.batch-directory-modal .batch-operation {
+    padding: 1rem;
+    border-left: 3px solid var(--interactive-accent);
+    margin-bottom: 1rem;
+    background-color: var(--background-secondary-alt);
+}
+
+.batch-directory-modal .batch-operation-title {
+    font-weight: 600;
+    color: var(--text-normal);
+    margin-bottom: 0.5rem;
+}
+
+.batch-directory-modal .batch-operation-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.batch-directory-modal .batch-inputs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.batch-directory-modal .batch-inputs input[type="text"] {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.5rem;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+}
+
+.batch-directory-modal .batch-button {
+    padding: 0.5rem 1.5rem;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.batch-directory-modal .batch-button:hover {
+    background-color: var(--interactive-accent-hover);
+    border-color: var(--interactive-accent-hover);
+    transform: translateY(-1px);
+}
+
+.batch-directory-modal .batch-button.secondary {
+    background-color: var(--background-secondary);
+    border-color: var(--background-modifier-border);
+    color: var(--text-normal);
+}
+
+.batch-directory-modal .batch-button.secondary:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+/* Analysis Section Specific Styles */
+.batch-directory-modal .analysis-section {
+    background-color: var(--background-secondary-alt);
+}
+
+.batch-directory-modal .analysis-section h3 {
+    background-color: var(--background-modifier-success);
+    color: var(--text-normal);
+}
+
+.batch-directory-modal .stats-display {
+    padding: 1rem;
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    font-family: var(--font-monospace);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 0.75rem;
+}
+
+/* Utility Classes */
+.flex-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.text-muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.text-accent {
+    color: var(--interactive-accent);
+    font-weight: 500;
+}
+
+.margin-bottom-small {
+    margin-bottom: 0.5rem;
+}
+
+.margin-bottom-medium {
+    margin-bottom: 1rem;
+}
+
+.margin-bottom-large {
+    margin-bottom: 1.5rem;
+}
+
+/* Progress and Status Indicators */
+.progress-indicator {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--interactive-accent);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.success {
+    background-color: var(--background-modifier-success);
+    color: var(--text-on-accent);
+}
+
+.status-badge.warning {
+    background-color: var(--background-modifier-error);
+    color: var(--text-on-accent);
+}
+
+.status-badge.info {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal {
+        padding: 1rem;
+        max-width: 100%;
+    }
+    
+    .batch-directory-modal .batch-inputs {
+        flex-direction: column;
+    }
+    
+    .batch-directory-modal .batch-inputs input[type="text"] {
+        min-width: 100%;
+    }
+    
+    .current-file-modal .text-case-buttons {
+        flex-direction: column;
+    }
+    
+    .current-file-modal .text-case-buttons button {
+        min-width: 100%;
+    }
+    
+    .current-file-modal .setting-item-control {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* Dark Theme Adjustments */
+.theme-dark .modal-section {
+    border-color: var(--background-modifier-border);
+}
+
+.theme-dark .modal-section h3 {
+    background-color: var(--background-secondary);
+}
+
+.theme-dark .batch-directory-modal .batch-operation {
+    background-color: var(--background-secondary);
+    border-left-color: var(--interactive-accent);
+}
+
+/* Light Theme Adjustments */
+.theme-light .modal-section {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .batch-directory-modal .batch-operation {
+    background-color: var(--background-primary-alt);
+}

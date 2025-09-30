@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-plugin-starter",
+	"name": "Obsidian Starter",
+	"version": "0.0.8",
+	"minAppVersion": "1.8.10",
+	"description": "This is starter code for Obsidian plugins (https://obsidian.md)",
+	"author": "The Lossless Group",
+	"authorUrl": "https://lossless.group",
+	"fundingUrl": "https://lossless.group",
+	"isDesktopOnly": true
+}

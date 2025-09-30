@@ -1,0 +1,37 @@
+{
+	"name": "obsidian-plugin-starter",
+	"version": "0.0.8",
+	"description": "This is starter code for Obsidian plugins (https://obsidian.md)",
+	"main": "main.js",
+	"scripts": {
+		"setup": "node setup-plugin.mjs",
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"version": "node version-bump.mjs && git add manifest.json versions.json"
+	},
+	"keywords": [
+		"Obsidian",
+		"Plugin",
+		"Footnotes",
+		"Citations"
+	],
+	"author": "The Lossless Group",
+	"license": "The Unlicense",
+	"devDependencies": {
+		"@eslint/plugin-kit": "^0.3.3",
+		"@types/node": "^24.0.12",
+		"@typescript-eslint/eslint-plugin": "8.37.0",
+		"@typescript-eslint/parser": "8.37.0",
+		"builtin-modules": "5.0.0",
+		"esbuild": "0.25.6",
+		"eslint": "^9.31.0",
+		"obsidian": "latest",
+		"tslib": "2.8.1",
+		"typescript": "5.8.3"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.15.0",
+		"fastify": "^5.4.0",
+		"zod": "^4.0.0"
+	}
+}
