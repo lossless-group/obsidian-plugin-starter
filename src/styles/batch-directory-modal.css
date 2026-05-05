@@ -1,0 +1,75 @@
+/* ============================================================
+   Batch Directory Modal — multi-file operations hub
+   See: context-v/issues/Widen-Modals-in-Obsidian-using-CSS.md
+   The class on this file is added to modalEl (the OUTER popup
+   element) so width rules actually widen the modal.
+   ============================================================ */
+
+.batch-directory-modal {
+    width: 90vw;
+    max-width: 900px;
+}
+
+.batch-directory-modal .modal-content {
+    padding: 0;
+}
+
+/* ----- Header ----- */
+
+.batch-directory-modal__header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.batch-directory-modal__title {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--text-normal);
+    letter-spacing: -0.01em;
+}
+
+/* ----- Sections ----- */
+
+.batch-directory-modal__section {
+    padding: 18px 28px 12px;
+}
+
+.batch-directory-modal__section + .batch-directory-modal__section {
+    border-top: 1px solid var(--background-modifier-border-hover);
+    margin-top: 4px;
+}
+
+.batch-directory-modal__section-title {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+/* Tighten native Setting spacing inside our sections */
+.batch-directory-modal__section .setting-item {
+    padding: 10px 0;
+    border-top: none;
+}
+
+.batch-directory-modal__section .setting-item + .setting-item {
+    border-top: 1px solid var(--background-modifier-border-hover);
+}
+
+/* ----- Responsive ----- */
+
+@media (max-width: 600px) {
+    .batch-directory-modal {
+        width: 95vw;
+        max-width: none;
+    }
+
+    .batch-directory-modal__header,
+    .batch-directory-modal__section {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+}

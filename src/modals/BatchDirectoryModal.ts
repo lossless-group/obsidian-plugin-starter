@@ -14,71 +14,51 @@ export class BatchDirectoryModal extends Modal {
     }
 
     onOpen() {
-        const { contentEl } = this;
+        const { contentEl, modalEl } = this;
+        // Attach to modalEl (outer .modal element) so width rules apply to the popup itself.
+        // See context-v/issues/Widen-Modals-in-Obsidian-using-CSS.md
+        modalEl.addClass('batch-directory-modal');
         contentEl.empty();
-        
-        // Make the modal wider
-        const modalContainer = contentEl.closest('.modal-container') as HTMLElement;
-        const modalContent = contentEl.closest('.modal-content') as HTMLElement;
-        
-        if (modalContainer && modalContent) {
-            // Set the modal container to be very wide
-            modalContainer.style.width = '95vw';
-            modalContainer.style.maxWidth = 'none';
-            
-            // Ensure the content takes full width
-            modalContent.style.width = '100%';
-            modalContent.style.maxWidth = 'none';
-        }
-        
-        contentEl.addClass('cite-wide-modal');
 
-        // Create a container for the content
-        const container = contentEl.createDiv('cite-wide-container');
-        
-        // Create header with title
-        const header = container.createDiv('cite-wide-header');
-        header.createEl('h2', { 
+        // Header
+        const header = contentEl.createDiv({ cls: 'batch-directory-modal__header' });
+        header.createEl('h2', {
             text: 'Batch Directory Operations',
-            cls: 'cite-wide-title'
+            cls: 'batch-directory-modal__title',
         });
-        
-        // Create main content area
-        const mainContent = container.createDiv('cite-wide-content');
 
         // Directory Selection
-        this.createDirectorySelectionSection(mainContent);
-        
+        this.createDirectorySelectionSection(contentEl);
+
         // Batch File Operations
-        this.createBatchFileOperationsSection(mainContent);
-        
+        this.createBatchFileOperationsSection(contentEl);
+
         // Batch Text Processing Operations
-        this.createBatchTextProcessingSection(mainContent);
-        
+        this.createBatchTextProcessingSection(contentEl);
+
         // Batch Analysis Operations
-        this.createBatchAnalysisSection(mainContent);
+        this.createBatchAnalysisSection(contentEl);
     }
 
     private createDirectorySelectionSection(container: HTMLElement) {
-        const section = container.createEl('div', { cls: 'modal-section' });
-        const sectionHeader = section.createDiv('cite-wide-group-header');
-        sectionHeader.createEl('h3', { 
+        const section = container.createDiv({ cls: 'batch-directory-modal__section' });
+        section.createEl('h3', {
             text: 'Directory Selection',
-            cls: 'cite-wide-group-title'
+            cls: 'batch-directory-modal__section-title',
         });
 
         new Setting(section)
             .setName('Target Directory')
             .setDesc('Directory to process (defaults to vault root)')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('/ (vault root)')
                     .setValue(this.targetDirectory)
-                    .onChange((value) => { 
+                    .onChange((value) => {
                         this.targetDirectory = value || '/';
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('List Files')
                     .onClick(async () => {
@@ -89,18 +69,17 @@ export class BatchDirectoryModal extends Modal {
     }
 
     private createBatchFileOperationsSection(container: HTMLElement) {
-        const section = container.createEl('div', { cls: 'modal-section' });
-        const sectionHeader = section.createDiv('cite-wide-group-header');
-        sectionHeader.createEl('h3', { 
+        const section = container.createDiv({ cls: 'batch-directory-modal__section' });
+        section.createEl('h3', {
             text: 'Batch File Operations',
-            cls: 'cite-wide-group-title'
+            cls: 'batch-directory-modal__section-title',
         });
 
         // Batch List Headers
         new Setting(section)
             .setName('Extract All Headers')
             .setDesc('Extract headers from all files in directory')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Extract Headers')
                     .onClick(async () => {
@@ -116,17 +95,17 @@ export class BatchDirectoryModal extends Modal {
         new Setting(section)
             .setName('Batch Update YAML')
             .setDesc('Update YAML key-value pair in all files')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('YAML key')
                     .onChange((value) => { yamlKey = value; })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('New value')
                     .onChange((value) => { yamlValue = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Update All YAML')
                     .onClick(async () => {
@@ -134,7 +113,7 @@ export class BatchDirectoryModal extends Modal {
                             new Notice('Please enter both key and value');
                             return;
                         }
-                        
+
                         let filesUpdated = 0;
                         await this.processBatchOperation('updateYaml', (file, content) => {
                             const yaml = currentFileService.extractYamlFrontmatter(content);
@@ -145,18 +124,17 @@ export class BatchDirectoryModal extends Modal {
                                 filesUpdated++;
                             }
                         });
-                        
+
                         new Notice(`Updated YAML in ${filesUpdated} files`);
                     })
             );
     }
 
     private createBatchTextProcessingSection(container: HTMLElement) {
-        const section = container.createEl('div', { cls: 'modal-section' });
-        const sectionHeader = section.createDiv('cite-wide-group-header');
-        sectionHeader.createEl('h3', { 
+        const section = container.createDiv({ cls: 'batch-directory-modal__section' });
+        section.createEl('h3', {
             text: 'Text Processing',
-            cls: 'cite-wide-group-title'
+            cls: 'batch-directory-modal__section-title',
         });
 
         // Batch Replace All
@@ -165,17 +143,17 @@ export class BatchDirectoryModal extends Modal {
         new Setting(section)
             .setName('Batch Replace All')
             .setDesc('Replace pattern in all files in directory')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Pattern to replace')
                     .onChange((value) => { replacePattern = value; })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Replace with')
                     .onChange((value) => { replaceWith = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Replace in All Files')
                     .onClick(async () => {
@@ -183,12 +161,12 @@ export class BatchDirectoryModal extends Modal {
                             new Notice('Please enter a pattern to replace');
                             return;
                         }
-                        
+
                         try {
                             const regex = new RegExp(replacePattern, 'g');
                             let filesUpdated = 0;
                             let totalReplacements = 0;
-                            
+
                             await this.processBatchOperation('replaceAll', (file, content) => {
                                 const result = textProcessingService.replaceAll(content, regex, replaceWith);
                                 if (result.changed) {
@@ -197,7 +175,7 @@ export class BatchDirectoryModal extends Modal {
                                     totalReplacements += result.stats.itemsProcessed;
                                 }
                             });
-                            
+
                             new Notice(`Made ${totalReplacements} replacements in ${filesUpdated} files`);
                         } catch (error) {
                             new Notice('Invalid regex pattern');
@@ -209,13 +187,13 @@ export class BatchDirectoryModal extends Modal {
         new Setting(section)
             .setName('Remove Duplicate Lines')
             .setDesc('Remove duplicate lines from all files')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Remove Duplicates in All Files')
                     .onClick(async () => {
                         let filesUpdated = 0;
                         let totalLinesRemoved = 0;
-                        
+
                         await this.processBatchOperation('removeDuplicates', (file, content) => {
                             const result = textProcessingService.removeDuplicateLines(content);
                             if (result.changed) {
@@ -224,7 +202,7 @@ export class BatchDirectoryModal extends Modal {
                                 totalLinesRemoved += result.stats.itemsProcessed;
                             }
                         });
-                        
+
                         new Notice(`Removed ${totalLinesRemoved} duplicate lines from ${filesUpdated} files`);
                     })
             );
@@ -233,12 +211,12 @@ export class BatchDirectoryModal extends Modal {
         new Setting(section)
             .setName('Normalize Whitespace')
             .setDesc('Clean up whitespace in all files')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Normalize All Files')
                     .onClick(async () => {
                         let filesUpdated = 0;
-                        
+
                         await this.processBatchOperation('normalizeWhitespace', (file, content) => {
                             const result = textProcessingService.normalizeWhitespace(content);
                             if (result.changed) {
@@ -246,18 +224,17 @@ export class BatchDirectoryModal extends Modal {
                                 filesUpdated++;
                             }
                         });
-                        
+
                         new Notice(`Normalized whitespace in ${filesUpdated} files`);
                     })
             );
     }
 
     private createBatchAnalysisSection(container: HTMLElement) {
-        const section = container.createEl('div', { cls: 'modal-section' });
-        const sectionHeader = section.createDiv('cite-wide-group-header');
-        sectionHeader.createEl('h3', { 
+        const section = container.createDiv({ cls: 'batch-directory-modal__section' });
+        section.createEl('h3', {
             text: 'Analysis & Reporting',
-            cls: 'cite-wide-group-title'
+            cls: 'batch-directory-modal__section-title',
         });
 
         // Count Pattern Matches
@@ -265,12 +242,12 @@ export class BatchDirectoryModal extends Modal {
         new Setting(section)
             .setName('Count Pattern Matches')
             .setDesc('Count occurrences of a pattern across all files')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Pattern to count (regex)')
                     .onChange((value) => { countPattern = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Count Matches')
                     .onClick(async () => {
@@ -278,12 +255,12 @@ export class BatchDirectoryModal extends Modal {
                             new Notice('Please enter a pattern to count');
                             return;
                         }
-                        
+
                         try {
                             const regex = new RegExp(countPattern, 'g');
                             let totalMatches = 0;
                             let filesWithMatches = 0;
-                            
+
                             await this.processBatchOperation('countMatches', (_file, content) => {
                                 const count = textProcessingService.countOccurrences(content, regex);
                                 if (count > 0) {
@@ -291,7 +268,7 @@ export class BatchDirectoryModal extends Modal {
                                     filesWithMatches++;
                                 }
                             });
-                            
+
                             new Notice(`Found ${totalMatches} matches in ${filesWithMatches} files`);
                         } catch (error) {
                             new Notice('Invalid regex pattern');
@@ -303,7 +280,7 @@ export class BatchDirectoryModal extends Modal {
         new Setting(section)
             .setName('Generate Statistics')
             .setDesc('Generate statistics for all files in directory')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Generate Stats')
                     .onClick(async () => {
@@ -312,21 +289,21 @@ export class BatchDirectoryModal extends Modal {
                         let totalLines = 0;
                         let totalCharacters = 0;
                         let filesWithYaml = 0;
-                        
+
                         for (const file of files) {
                             const content = await this.app.vault.read(file);
                             const lines = content.split('\n');
                             const words = content.split(/\s+/).filter(w => w.length > 0);
-                            
+
                             totalLines += lines.length;
                             totalWords += words.length;
                             totalCharacters += content.length;
-                            
+
                             if (currentFileService.extractYamlFrontmatter(content)) {
                                 filesWithYaml++;
                             }
                         }
-                        
+
                         const stats = [
                             `Files: ${files.length}`,
                             `Total Lines: ${totalLines}`,
@@ -334,7 +311,7 @@ export class BatchDirectoryModal extends Modal {
                             `Total Characters: ${totalCharacters}`,
                             `Files with YAML: ${filesWithYaml}`
                         ];
-                        
+
                         new Notice(`Directory Statistics:\n${stats.join('\n')}`);
                     })
             );
@@ -342,11 +319,11 @@ export class BatchDirectoryModal extends Modal {
 
     private async getMarkdownFilesInDirectory(directory: string): Promise<TFile[]> {
         const files = this.app.vault.getMarkdownFiles();
-        
+
         if (directory === '/' || directory === '') {
             return files;
         }
-        
+
         return files.filter(file => file.path.startsWith(directory));
     }
 
@@ -355,14 +332,14 @@ export class BatchDirectoryModal extends Modal {
         callback: (file: TFile, content: string) => void
     ): Promise<void> {
         const files = await this.getMarkdownFilesInDirectory(this.targetDirectory);
-        
+
         if (files.length === 0) {
             new Notice('No markdown files found in directory');
             return;
         }
-        
+
         new Notice(`Processing ${files.length} files...`);
-        
+
         for (const file of files) {
             try {
                 const content = await this.app.vault.read(file);
@@ -371,7 +348,7 @@ export class BatchDirectoryModal extends Modal {
                 console.error(`Error processing file ${file.path}:`, error);
             }
         }
-        
+
         new Notice(`Batch operation '${operationType}' completed`);
     }
 

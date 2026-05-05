@@ -1,0 +1,4 @@
+/* Main CSS entry point for filestarter plugin */
+
+@import './current-file-modal.css';
+@import './batch-directory-modal.css';

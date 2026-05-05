@@ -16,10 +16,18 @@ export class CurrentFileModal extends Modal {
     }
 
     async onOpen() {
-        const { contentEl } = this;
+        const { contentEl, modalEl } = this;
+        // Attach to modalEl (outer .modal element) so width rules apply to the popup itself.
+        // See context-v/issues/Widen-Modals-in-Obsidian-using-CSS.md
+        modalEl.addClass('current-file-modal');
         contentEl.empty();
 
-        contentEl.createEl('h2', { text: 'Current File Operations' });
+        // Header
+        const header = contentEl.createDiv({ cls: 'current-file-modal__header' });
+        header.createEl('h2', {
+            text: 'Current File Operations',
+            cls: 'current-file-modal__title',
+        });
 
         // UUID Operations (at the top)
         await this.createUuidSection(contentEl);
@@ -33,17 +41,20 @@ export class CurrentFileModal extends Modal {
 
         // Current File Service Operations
         this.createFileOperationsSection(contentEl);
-        
+
         // Text Processing Operations
         this.createTextProcessingSection(contentEl);
-        
+
         // Selection Operations
         this.createSelectionOperationsSection(contentEl);
     }
 
     private async createUuidSection(contentEl: HTMLElement) {
-        const section = contentEl.createEl('div', { cls: 'modal-section uuid-section' });
-        section.createEl('h3', { text: 'UUID Operations' });
+        const section = contentEl.createDiv({ cls: 'current-file-modal__section' });
+        section.createEl('h3', {
+            text: 'UUID Operations',
+            cls: 'current-file-modal__section-title',
+        });
 
         // Check if current file has site_uuid
         const hasUuid = await this.checkForExistingSiteUuid();
@@ -71,17 +82,17 @@ export class CurrentFileModal extends Modal {
 
                             new Notice('Adding site UUID...', 2000);
                             const result = await processSiteUuidForFile(activeFile);
-                            
+
                             if (result.success) {
-                                const message = result.hadExistingUuid 
+                                const message = result.hadExistingUuid
                                     ? `Updated site UUID: ${result.uuid}`
                                     : `Added site UUID: ${result.uuid}`;
                                 new Notice(message, 5000);
-                                
+
                                 // Refresh the editor content to show the updated frontmatter
                                 const updatedContent = await activeFile.vault.read(activeFile);
                                 this.editor.setValue(updatedContent);
-                                
+
                                 // Update button styling after adding UUID
                                 this.updateUuidButtonStyling(buttonEl.buttonEl, true);
                             } else {
@@ -92,10 +103,10 @@ export class CurrentFileModal extends Modal {
                             new Notice('Error adding site UUID: ' + errorMsg, 5000);
                         }
                     });
-                
+
                 // Apply initial styling based on UUID presence
                 this.updateUuidButtonStyling(buttonEl.buttonEl, hasUuid);
-                
+
                 return buttonEl;
             });
     }
@@ -110,16 +121,16 @@ export class CurrentFileModal extends Modal {
             const content = await activeFile.vault.read(activeFile);
             const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
             const match = content.match(frontmatterRegex);
-            
+
             if (!match) return false;
-            
+
             const frontmatterContent = match[1];
             if (!frontmatterContent) return false;
-            
+
             const siteUuidMatch = frontmatterContent.match(/^site_uuid:\s*(.+)$/m);
-            
+
             if (!siteUuidMatch || !siteUuidMatch[1]) return false;
-            
+
             const uuidValue = siteUuidMatch[1].trim();
             // Check if UUID exists and is not empty (accounting for quotes)
             return !!(uuidValue && uuidValue !== '""' && uuidValue !== "''" && uuidValue !== 'null');
@@ -130,46 +141,30 @@ export class CurrentFileModal extends Modal {
     }
 
     private updateUuidButtonStyling(buttonEl: HTMLButtonElement, hasUuid: boolean) {
-        if (hasUuid) {
-            // Remove purple styling if UUID exists
-            buttonEl.style.backgroundColor = '';
-            buttonEl.style.color = '';
-            buttonEl.style.borderColor = '';
-        } else {
-            // Apply purple styling if no UUID
-            buttonEl.style.backgroundColor = 'var(--interactive-accent)';
-            buttonEl.style.color = 'var(--text-on-accent)';
-            buttonEl.style.borderColor = 'var(--interactive-accent-hover)';
-        }
+        buttonEl.toggleClass('current-file-modal__uuid-button--needs-uuid', !hasUuid);
     }
 
     private createPublishStateSection(contentEl: HTMLElement) {
-        const section = contentEl.createEl('div', { cls: 'modal-section publish-section' });
-        section.createEl('h3', { text: 'Change publish state?' });
-
-        // Create a container for the buttons with flexbox styling
-        const buttonContainer = section.createEl('div', {
-            cls: 'publish-button-container'
+        const section = contentEl.createDiv({ cls: 'current-file-modal__section' });
+        section.createEl('h3', {
+            text: 'Change publish state?',
+            cls: 'current-file-modal__section-title',
         });
-        buttonContainer.style.display = 'flex';
-        buttonContainer.style.justifyContent = 'space-between';
-        buttonContainer.style.gap = '10px';
-        buttonContainer.style.marginTop = '10px';
 
-        // True button
+        const buttonContainer = section.createDiv({
+            cls: 'current-file-modal__publish-buttons',
+        });
+
         const trueButton = buttonContainer.createEl('button', {
             text: 'true',
-            cls: 'mod-cta publish-button'
+            cls: 'mod-cta current-file-modal__publish-button',
         });
-        trueButton.style.flex = '1';
         trueButton.addEventListener('click', () => this.setPublishState(true));
 
-        // False button
         const falseButton = buttonContainer.createEl('button', {
             text: 'false',
-            cls: 'mod-cta publish-button'
+            cls: 'mod-cta current-file-modal__publish-button',
         });
-        falseButton.style.flex = '1';
         falseButton.addEventListener('click', () => this.setPublishState(false));
     }
 
@@ -188,34 +183,34 @@ export class CurrentFileModal extends Modal {
             }
 
             new Notice(`Setting publish to ${publishValue}...`, 2000);
-            
+
             // Read current content and extract frontmatter
             const content = await activeFile.vault.read(activeFile);
             const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
             const match = content.match(frontmatterRegex);
-            
+
             let frontmatter: Record<string, any> = {};
-            
+
             if (match && match[1]) {
                 // Parse existing frontmatter using our utility
                 const { extractFrontmatter } = await import('../utils/yamlFrontmatter');
                 frontmatter = extractFrontmatter(content) || {};
             }
-            
+
             // Update the publish property
             frontmatter.publish = publishValue;
-            
+
             // Format and update the file
             const { formatFrontmatter, updateFileFrontmatter } = await import('../utils/yamlFrontmatter');
             const formattedFrontmatter = formatFrontmatter(frontmatter);
             await updateFileFrontmatter(activeFile, formattedFrontmatter);
-            
+
             new Notice(`Publish state set to ${publishValue}`, 3000);
-            
+
             // Refresh the editor content to show the updated frontmatter
             const updatedContent = await activeFile.vault.read(activeFile);
             this.editor.setValue(updatedContent);
-            
+
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : String(error);
             new Notice('Error setting publish state: ' + errorMsg, 5000);
@@ -223,14 +218,17 @@ export class CurrentFileModal extends Modal {
     }
 
     private createFileOperationsSection(contentEl: HTMLElement) {
-        const section = contentEl.createEl('div', { cls: 'modal-section' });
-        section.createEl('h3', { text: 'File Operations' });
+        const section = contentEl.createDiv({ cls: 'current-file-modal__section' });
+        section.createEl('h3', {
+            text: 'File Operations',
+            cls: 'current-file-modal__section-title',
+        });
 
         // List Headers Button
         new Setting(section)
             .setName('List Headers')
             .setDesc('Extract all headers from the current file')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('List Headers')
                     .onClick(() => {
@@ -250,20 +248,20 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Add Text')
             .setDesc('Add text at a specific position')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Text to add')
                     .onChange((value) => { addTextInput = value; })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Position (0 for start)')
-                    .onChange((value) => { 
+                    .onChange((value) => {
                         const num = parseInt(value);
                         addTextPosition = isNaN(num) ? 0 : num;
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Add Text')
                     .onClick(() => {
@@ -284,23 +282,23 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Delete Text Range')
             .setDesc('Delete text between two positions')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Start position')
-                    .onChange((value) => { 
+                    .onChange((value) => {
                         const num = parseInt(value);
                         deleteStart = isNaN(num) ? 0 : num;
                     })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('End position')
-                    .onChange((value) => { 
+                    .onChange((value) => {
                         const num = parseInt(value);
                         deleteEnd = isNaN(num) ? 0 : num;
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Delete Text')
                     .onClick(() => {
@@ -319,7 +317,7 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Extract YAML Frontmatter')
             .setDesc('Extract YAML frontmatter from the current file')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Extract YAML')
                     .onClick(() => {
@@ -339,17 +337,17 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Change YAML Value')
             .setDesc('Update a key-value pair in YAML frontmatter')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('YAML key')
                     .onChange((value) => { yamlKey = value; })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('New value')
                     .onChange((value) => { yamlValue = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Update YAML')
                     .onClick(() => {
@@ -372,20 +370,23 @@ export class CurrentFileModal extends Modal {
     }
 
     private createTextProcessingSection(contentEl: HTMLElement) {
-        const section = contentEl.createEl('div', { cls: 'modal-section' });
-        section.createEl('h3', { text: 'Text Processing Operations' });
+        const section = contentEl.createDiv({ cls: 'current-file-modal__section' });
+        section.createEl('h3', {
+            text: 'Text Processing Operations',
+            cls: 'current-file-modal__section-title',
+        });
 
         // Find Matches Section
         let searchPattern = '';
         new Setting(section)
             .setName('Find Matches')
             .setDesc('Find all matches of a regex pattern')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Regex pattern (e.g., \\d+)')
                     .onChange((value) => { searchPattern = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Find Matches')
                     .onClick(() => {
@@ -410,17 +411,17 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Replace All')
             .setDesc('Replace all instances of a pattern')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Pattern to replace')
                     .onChange((value) => { replacePattern = value; })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Replace with')
                     .onChange((value) => { replaceWith = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Replace All')
                     .onClick(() => {
@@ -448,7 +449,7 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Remove Duplicate Lines')
             .setDesc('Remove duplicate lines from the file')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Remove Duplicates')
                     .onClick(() => {
@@ -467,7 +468,7 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Normalize Whitespace')
             .setDesc('Clean up and normalize whitespace in the file')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Normalize Whitespace')
                     .onClick(() => {
@@ -484,14 +485,17 @@ export class CurrentFileModal extends Modal {
     }
 
     private createSelectionOperationsSection(contentEl: HTMLElement) {
-        const section = contentEl.createEl('div', { cls: 'modal-section' });
-        section.createEl('h3', { text: 'Selection Operations' });
+        const section = contentEl.createDiv({ cls: 'current-file-modal__section' });
+        section.createEl('h3', {
+            text: 'Selection Operations',
+            cls: 'current-file-modal__section-title',
+        });
 
         // Text Case Transformations
         new Setting(section)
             .setName('Text Case')
             .setDesc('Transform selected text case')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('UPPERCASE')
                     .onClick(() => {
@@ -505,7 +509,7 @@ export class CurrentFileModal extends Modal {
                         new Notice('Text converted to uppercase');
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('lowercase')
                     .onClick(() => {
@@ -519,7 +523,7 @@ export class CurrentFileModal extends Modal {
                         new Notice('Text converted to lowercase');
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Title Case')
                     .onClick(() => {
@@ -540,17 +544,17 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Wrap Lines')
             .setDesc('Wrap each line in selection with prefix/suffix')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Prefix (default: "> ")')
                     .onChange((value) => { wrapPrefix = value || '> '; })
             )
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Suffix (optional)')
                     .onChange((value) => { wrapSuffix = value; })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Wrap Lines')
                     .onClick(() => {
@@ -569,7 +573,7 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Line Operations')
             .setDesc('Various line-based operations')
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Remove Empty Lines')
                     .onClick(() => {
@@ -583,7 +587,7 @@ export class CurrentFileModal extends Modal {
                         new Notice(`Removed ${result.stats.linesProcessed} empty lines`);
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Sort Lines')
                     .onClick(() => {
@@ -597,7 +601,7 @@ export class CurrentFileModal extends Modal {
                         new Notice(`Sorted ${result.stats.linesProcessed} lines`);
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Trim Lines')
                     .onClick(() => {
@@ -617,15 +621,15 @@ export class CurrentFileModal extends Modal {
         new Setting(section)
             .setName('Add Line Numbers')
             .setDesc('Add line numbers to selected text')
-            .addText(text => 
+            .addText(text =>
                 text
                     .setPlaceholder('Starting number (default: 1)')
-                    .onChange((value) => { 
+                    .onChange((value) => {
                         const num = parseInt(value);
                         startNumber = isNaN(num) ? 1 : num;
                     })
             )
-            .addButton(button => 
+            .addButton(button =>
                 button
                     .setButtonText('Add Numbers')
                     .onClick(() => {

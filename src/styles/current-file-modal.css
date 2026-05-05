@@ -1,0 +1,154 @@
+/* ============================================================
+   Current File Modal — single-file operations hub
+   See: context-v/issues/Widen-Modals-in-Obsidian-using-CSS.md
+   The class on this file is added to modalEl (the OUTER popup
+   element) so width rules actually widen the modal — adding
+   to contentEl only sizes the inner area.
+   ============================================================ */
+
+.current-file-modal {
+    width: 90vw;
+    max-width: 800px;
+}
+
+.current-file-modal .modal-content {
+    padding: 0;
+}
+
+/* ----- Header ----- */
+
+.current-file-modal__header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.current-file-modal__title {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--text-normal);
+    letter-spacing: -0.01em;
+}
+
+/* ----- Sections ----- */
+
+.current-file-modal__section {
+    padding: 18px 28px 12px;
+}
+
+.current-file-modal__section + .current-file-modal__section {
+    border-top: 1px solid var(--background-modifier-border-hover);
+    margin-top: 4px;
+}
+
+.current-file-modal__section-title {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+/* Tighten native Setting spacing inside our sections */
+.current-file-modal__section .setting-item {
+    padding: 10px 0;
+    border-top: none;
+}
+
+.current-file-modal__section .setting-item + .setting-item {
+    border-top: 1px solid var(--background-modifier-border-hover);
+}
+
+/* ----- Publish state buttons ----- */
+
+.current-file-modal__publish-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.current-file-modal__publish-button {
+    flex: 1;
+}
+
+/* ----- UUID button state ----- */
+
+/* Highlight the UUID button when the file has no site_uuid yet */
+.current-file-modal__uuid-button--needs-uuid {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent-hover);
+}
+
+/* ----- Header Info table ----- */
+
+.current-file-modal__header-info-table {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.current-file-modal__header-info-grid {
+    display: grid;
+    grid-template-columns: 30px 80px 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.current-file-modal__header-info-thead {
+    font-weight: bold;
+    font-size: 12px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.current-file-modal__header-info-row {
+    padding: 5px 0;
+}
+
+.current-file-modal__header-checkbox-cell {
+    display: flex;
+    justify-content: center;
+}
+
+.current-file-modal__header-checkbox-cell input[type="checkbox"] {
+    transform: scale(0.9);
+    margin: 0;
+}
+
+.current-file-modal__header-generate-btn {
+    font-size: 11px;
+    padding: 2px 6px;
+    min-height: 24px;
+}
+
+.current-file-modal__header-info-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 3px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+}
+
+/* ----- Responsive ----- */
+
+@media (max-width: 600px) {
+    .current-file-modal {
+        width: 95vw;
+        max-width: none;
+    }
+
+    .current-file-modal__header,
+    .current-file-modal__section {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .current-file-modal__publish-buttons {
+        flex-direction: column;
+    }
+}

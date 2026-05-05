@@ -1,9 +1,9 @@
 import { App, Editor, Notice } from 'obsidian';
 import { extractFrontmatter, formatFrontmatter, updateFileFrontmatter } from '../../utils/yamlFrontmatter';
-import { 
-    generateTitle, 
-    generateLede, 
-    generateSlug, 
+import {
+    generateTitle,
+    generateLede,
+    generateSlug,
     generateSemanticVersion,
     updateHeaderProperty
 } from '../../services/headerService';
@@ -25,16 +25,18 @@ export class HeaderInfoSection {
     }
 
     async render(parentElement: HTMLElement): Promise<void> {
-        const section = parentElement.createEl('div', { cls: 'modal-section header-info-section' });
-        section.createEl('h3', { text: 'Header Info' });
+        const section = parentElement.createDiv({ cls: 'current-file-modal__section' });
+        section.createEl('h3', {
+            text: 'Header Info',
+            cls: 'current-file-modal__section-title',
+        });
         this.container = section;
 
         // Get current frontmatter values
         const frontmatter = await this.getCurrentFrontmatter();
-        
+
         // Create table container
-        const tableContainer = section.createEl('div', { cls: 'header-info-table' });
-        this.setupTableStyles(tableContainer);
+        const tableContainer = section.createDiv({ cls: 'current-file-modal__header-info-table' });
 
         // Define the properties we want to manage
         const headerProperties: HeaderProperty[] = [
@@ -53,94 +55,61 @@ export class HeaderInfoSection {
         });
     }
 
-    private setupTableStyles(tableContainer: HTMLElement): void {
-        tableContainer.style.display = 'flex';
-        tableContainer.style.flexDirection = 'column';
-        tableContainer.style.gap = '8px';
-        tableContainer.style.marginTop = '10px';
-    }
-
     private createTableHeader(tableContainer: HTMLElement): void {
-        const headerRow = tableContainer.createEl('div', { cls: 'header-row' });
-        headerRow.style.display = 'grid';
-        headerRow.style.gridTemplateColumns = '30px 80px 1fr';
-        headerRow.style.gap = '8px';
-        headerRow.style.alignItems = 'center';
-        headerRow.style.fontWeight = 'bold';
-        headerRow.style.fontSize = '12px';
-        headerRow.style.borderBottom = '1px solid var(--background-modifier-border)';
-        headerRow.style.paddingBottom = '5px';
-        headerRow.style.marginBottom = '5px';
-        
-        headerRow.createEl('div', { text: '' }); // Empty header for checkbox column
+        const headerRow = tableContainer.createDiv({
+            cls: 'current-file-modal__header-info-grid current-file-modal__header-info-thead',
+        });
+        headerRow.createEl('div'); // Empty cell above checkbox column
         headerRow.createEl('div', { text: 'Generate' });
         headerRow.createEl('div', { text: 'Current Value' });
     }
 
     private createPropertyRow(tableContainer: HTMLElement, prop: HeaderProperty, frontmatter: Record<string, any>): void {
-        const row = tableContainer.createEl('div', { cls: 'header-info-row' });
-        row.style.display = 'grid';
-        row.style.gridTemplateColumns = '30px 80px 1fr';
-        row.style.gap = '8px';
-        row.style.alignItems = 'center';
-        row.style.padding = '5px 0';
-        
+        const row = tableContainer.createDiv({
+            cls: 'current-file-modal__header-info-grid current-file-modal__header-info-row',
+        });
+
         // Checkbox column
         this.createCheckboxColumn(row, prop);
-        
+
         // Generate button column
         this.createGenerateButtonColumn(row, prop);
-        
+
         // Text input column
         this.createTextInputColumn(row, prop, frontmatter);
     }
 
     private createCheckboxColumn(row: HTMLElement, prop: HeaderProperty): void {
-        const checkboxContainer = row.createEl('div');
-        checkboxContainer.style.display = 'flex';
-        checkboxContainer.style.justifyContent = 'center';
-        const checkbox = checkboxContainer.createEl('input', {
+        const cell = row.createDiv({ cls: 'current-file-modal__header-checkbox-cell' });
+        cell.createEl('input', {
             type: 'checkbox',
-            cls: `header-checkbox-${prop.key}`
+            cls: `header-checkbox-${prop.key}`,
         });
-        checkbox.style.transform = 'scale(0.9)';
-        checkbox.style.margin = '0';
     }
 
     private createGenerateButtonColumn(row: HTMLElement, prop: HeaderProperty): void {
-        const buttonContainer = row.createEl('div');
-        const generateButton = buttonContainer.createEl('button', {
+        const cell = row.createDiv();
+        const generateButton = cell.createEl('button', {
             text: 'Generate',
-            cls: 'mod-cta header-generate-btn'
+            cls: 'mod-cta current-file-modal__header-generate-btn',
         });
-        generateButton.style.fontSize = '11px';
-        generateButton.style.padding = '2px 6px';
-        generateButton.style.minHeight = '24px';
         generateButton.addEventListener('click', () => this.generateHeaderProperty(prop.key));
     }
 
     private createTextInputColumn(row: HTMLElement, prop: HeaderProperty, frontmatter: Record<string, any>): void {
-        const inputContainer = row.createEl('div');
-        const textInput = inputContainer.createEl('input', {
+        const cell = row.createDiv();
+        const textInput = cell.createEl('input', {
             type: 'text',
-            cls: `header-input-${prop.key}`,
-            placeholder: `Enter ${prop.label.toLowerCase()}...`
+            cls: `current-file-modal__header-info-input header-input-${prop.key}`,
+            placeholder: `Enter ${prop.label.toLowerCase()}...`,
         }) as HTMLInputElement;
-        
-        // Style the input
-        textInput.style.width = '100%';
-        textInput.style.padding = '4px 8px';
-        textInput.style.border = '1px solid var(--background-modifier-border)';
-        textInput.style.borderRadius = '3px';
-        textInput.style.backgroundColor = 'var(--background-primary)';
-        textInput.style.color = 'var(--text-normal)';
-        
+
         // Set current value if it exists
         const currentValue = frontmatter[prop.key];
         if (currentValue !== undefined && currentValue !== null) {
             textInput.value = String(currentValue);
         }
-        
+
         // Add change listener to update frontmatter when user types
         textInput.addEventListener('change', () => this.updateHeaderProperty(prop.key, textInput.value));
     }
@@ -196,13 +165,13 @@ export class HeaderInfoSection {
 
             if (result.success) {
                 new Notice(result.message, 3000);
-                
+
                 // Update the input field with the new value
                 const input = this.container?.querySelector(`.header-input-${propertyKey}`) as HTMLInputElement;
                 if (input && result.value) {
                     input.value = result.value;
                 }
-                
+
                 // Refresh editor
                 await this.refreshEditor();
             } else {
@@ -226,21 +195,21 @@ export class HeaderInfoSection {
             // Get current frontmatter
             const content = await activeFile.vault.read(activeFile);
             const frontmatter = extractFrontmatter(content) || {};
-            
+
             // Update the property
             if (value.trim() === '') {
                 delete frontmatter[propertyKey];
             } else {
                 frontmatter[propertyKey] = value;
             }
-            
+
             // Write back to file
             const formattedFrontmatter = formatFrontmatter(frontmatter);
             await updateFileFrontmatter(activeFile, formattedFrontmatter);
-            
+
             // Refresh editor
             await this.refreshEditor();
-            
+
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : String(error);
             logger.error(`[HeaderInfoSection] Error updating ${propertyKey}:`, error);
