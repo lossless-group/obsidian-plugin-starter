@@ -8,6 +8,10 @@ lede: "Creating modular maintainable code for Obsidian Plugin Modals"
 at_semantic_version: 0.0.0.1
 date_created: 2025-07-22
 date_modified: 2025-07-23
+authors:
+  - Michael Staton
+hex_code: thyvev
+type: Blueprints
 ---
 
 Because the [[Tooling/Productivity/Advanced Documents/Obsidian|Obsidian]] API and developer docs have their own peculiarity, I thought I would document how to refactor a really long modal into importable sections:
